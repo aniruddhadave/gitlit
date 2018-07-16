@@ -56,6 +56,39 @@ class GitLit(enum.Enum):
                 write_file(path, zlib.compress(full_data))
         return sha1
     
-                
+    def commit(self):
+        pass
+    
+    
+    def status(self):
+        pass
+    
+    
+    def diff(self):
+        pass
+    
+    
+    def add(self):
+        pass
+    
+    
+    def checkout(self):
+        pass
+    
+    
+    def branch(self):
+        pass
+    
+    
+    def lof(self):
+        pass
+    
+    
+    def merge(self):
+        pass
+    
+    
+    def push(self):
+        pass            
                 
         

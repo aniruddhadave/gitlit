@@ -4,6 +4,9 @@ Utilities
 @author: Aniruddha Dave
 """
 import zlib
+import sys
+from sphinx.util.pycompat import sys_encoding
+from bkcharts.stats import stats
 
 def read_file(path):
     """Reads contents of file as bytes."""
@@ -52,4 +55,33 @@ def read_object(sha1_prefix):
     assert size == len(data), 'expected size {} but received {} bytes'.format(
         size, size_recvd)
     return (object_type, data)
+
+def cat_file(mode, sha1_prefix):
+    """
+    Writes the contents or the info about the object with given SHA-1 prefix to stdout.
+    Prints raw data bytes if mode is 'commit', 'tree' or 'blob'
+    Prints size of the object if mode is 'size'
+    Prints type of the object if mode is 'type'
+    Prints pretty version of the object if mode is 'pretty'
+    """
+    object_type , data = read_object(sha1_prefix)
+    if mode in ['commit', 'tree', 'blob']:
+        if object_type != mode:
+            raise ValueError('Expected object type {} but received {}'.
+                             format(mode, object_type))
+        sys.stdout.write(data)
+    elif mode == 'type':
+        print (object_type)
+    elif mode == 'size':
+        print(len(data))
+    elif mode == 'pretty':
+        if object_type in ['commit', 'blob']:
+            sys_encoding.stdout.write(data)
+        elif object_type == 'tree':
+            for mode, path, sha1 in read_tree(data=data):
+                type_string = 'tree' if stat.S_ISDIR(mode) else 'blob'
+        else:
+            assert False, 'Unhandled object type: {}'.format(object_type)
+    else:
+        raise ValueError('Unexpected mode type: {}'.format(mode))
         
